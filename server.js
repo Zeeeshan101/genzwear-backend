@@ -2,13 +2,21 @@ const express = require('express');
 const app = express();
 const mongoose = require('mongoose');
 
-const cors = require("cors");
-app.use(cors({ origin: "http://localhost:5173", credentials: true }));
+const corsOptions = {
+  origin: [
+    'http://localhost:5173',
+    'https://genzwear.vercel.app',
+    'https://genzwear-hj2l124ea-zeeshan-khans-projects-215a52a1.vercel.app'
+  ],
+  credentials: true,
+};
+
+app.use(cors(corsOptions));
+
 
 require('dotenv').config();
 
-// ✅ Middleware: put these BEFORE routes
-app.use(cors());
+
 app.use(express.json());  // ✅ Move this ABOVE the routes
 
 const authRoutes = require('./routes/auth');
