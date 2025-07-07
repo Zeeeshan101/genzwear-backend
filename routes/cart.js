@@ -88,7 +88,13 @@ router.patch('/:productId', verifyToken, async (req, res) => {
 
     cart.products[productIndex].quantity = quantity;
     await cart.save();
-    res.json(cart);
+
+
+// sending this updated cart after populating cause we need to show the updated  deails like item.price // 
+    const updatedCart = await Cart.findOne({ userId: req.user.id }).populate('products.productId');
+
+
+    res.json(updatedCart);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
