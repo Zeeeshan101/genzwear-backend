@@ -29,7 +29,7 @@ router.post("/create-payment-link", async (req, res) => {
     email: true,
   },
   reference_id: referenceId,
-  callback_url: "http://localhost:5173/payment-success",
+  callback_url: `${process.env.VITE_API_URL}/payment-success`,
   callback_method: "get",
 });
 
