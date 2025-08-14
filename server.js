@@ -2,6 +2,7 @@ const express = require('express');
 const app = express();
 const mongoose = require('mongoose');
 const cors = require('cors');
+const paymentRoutes = require("./routes/payment");
 
 
 
@@ -36,6 +37,11 @@ app.use('/api/cart', cartRoutes);
 
 const orderRoutes = require('./routes/order');
 app.use('/api/orders', orderRoutes);
+
+
+
+app.use("/api/payment", paymentRoutes);
+
 
 
 
