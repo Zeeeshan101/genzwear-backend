@@ -1,9 +1,10 @@
-const express = require('express');
-const router = express.Router();
-const Cart = require('../models/Cart');
-const verifyToken = require('../middleware/verifyToken');
+import express from 'express';
+import Cart from '../models/Cart.js';
+import verifyToken from '../middleware/verifyToken.js';
 
-//  Add or Update Product in Cart
+const router = express.Router();
+
+// 🛒 Add or Update Product in Cart
 router.post('/', verifyToken, async (req, res) => {
   try {
     const { productId, quantity } = req.body;
@@ -15,7 +16,7 @@ router.post('/', verifyToken, async (req, res) => {
       cart = new Cart({
         userId: req.user.id,
         products: [{ productId, quantity }],
-      });4
+      });
     } else {
       // Check if product exists in cart
       const productIndex = cart.products.findIndex(
@@ -48,7 +49,7 @@ router.get('/', verifyToken, async (req, res) => {
   }
 });
 
-//  Remove Product from Cart
+// ❌ Remove Product from Cart
 router.delete('/:productId', verifyToken, async (req, res) => {
   try {
     const cart = await Cart.findOne({ userId: req.user.id });
@@ -66,11 +67,7 @@ router.delete('/:productId', verifyToken, async (req, res) => {
   }
 });
 
-// adding a new route toupdate quantity using product id from params and quantity from body// 
-
-// updatying quantity from cart options -- // 
-
-
+// ✏️ Update Quantity of a Product
 router.patch('/:productId', verifyToken, async (req, res) => {
   try {
     const { quantity } = req.body;
@@ -89,18 +86,12 @@ router.patch('/:productId', verifyToken, async (req, res) => {
     cart.products[productIndex].quantity = quantity;
     await cart.save();
 
-
-// sending this updated cart after populating cause we need to show the updated  deails like item.price // 
+    // Return updated cart with populated product details
     const updatedCart = await Cart.findOne({ userId: req.user.id }).populate('products.productId');
-
-
     res.json(updatedCart);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 });
 
-
-
-
-module.exports = router;
+export default router;

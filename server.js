@@ -1,63 +1,51 @@
-const express = require('express');
+import express from "express";
+import mongoose from "mongoose";
+import cors from "cors";
+import dotenv from "dotenv";
+
+import authRoutes from "./routes/auth.js";
+import productRoutes from "./routes/product.js";
+import cartRoutes from "./routes/cart.js";
+import orderRoutes from "./routes/order.js";
+
+dotenv.config();
+
 const app = express();
-const mongoose = require('mongoose');
-const cors = require('cors');
-const paymentRoutes = require("./routes/payment");
 
+// ✅ Middleware
+app.use(express.json());
+app.use(
+  cors({
+    origin: ["https://genzwear.vercel.app", "http://localhost:5173"],
+    credentials: true,
+  })
+);
 
-
-
-app.use(cors({
-  origin: ["https://genzwear.vercel.app", "http://localhost:5173"],
-  credentials: true,
-}));
-
-
-require('dotenv').config();
-
-
-app.use(express.json());  // ✅ Move this ABOVE the routes
-
-const authRoutes = require('./routes/auth');
 // ✅ Routes
-app.use('/api/auth', authRoutes);
-
-
-const productRoutes = require('./routes/product');
-app.use('/api/products', productRoutes);
-
-
+app.use("/api/auth", authRoutes);
+app.use("/api/products", productRoutes);
 app.get("/api/test", (req, res) => {
   res.send("✅ Test route working from server.js");
 });
-
-
-const cartRoutes = require('./routes/cart');
-app.use('/api/cart', cartRoutes);
-
-const orderRoutes = require('./routes/order');
-app.use('/api/orders', orderRoutes);
-
-
-
-app.use("/api/payment", paymentRoutes);
-
-
-
+app.use("/api/cart", cartRoutes);
+app.use("/api/orders", orderRoutes);
 
 // ✅ MongoDB
 const PORT = process.env.PORT || 5000;
 const uri = process.env.MONGO_URI;
 
-mongoose.connect(uri)
+mongoose
+  .connect(uri)
   .then(() => console.log("✅ MongoDB connected"))
   .catch((err) => console.error("❌ MongoDB connection error:", err));
 
-app.get('/', (req, res) => {
-  res.send('API Running');
+app.get("/", (req, res) => {
+  res.send("API Running");
 });
 
-
+app.use((req, res) => {
+  res.status(404).json({ error: "Route not found" });
+});
 
 
 app.listen(PORT, () => {
